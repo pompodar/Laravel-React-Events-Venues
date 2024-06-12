@@ -1,0 +1,1 @@
+Make sure to run php artisan storage:link before running the project
