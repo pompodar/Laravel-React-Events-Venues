@@ -13,12 +13,25 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $events = Event::with('venue')->orderBy($request->get('sort', 'id'), $request->get('direction', 'asc'))->paginate(10);
+        $sort = $request->get('sort', 'events.id');
+        $direction = $request->get('direction', 'asc');
+
+        $events = Event::with('venue');
+
+        if ($sort === 'venue') {
+            $events = $events->join('venues', 'events.venue_id', '=', 'venues.id')
+                            ->select('events.*', 'venues.name as venue_name')
+                            ->orderBy('venues.name', $direction);
+        } else {
+            $events = $events->orderBy($sort, $direction);
+        }
+
+        $events = $events->paginate(10);
 
         return Inertia::render('Events/Index', [
             'events' => $events,
-            'sort' => $request->get('sort', 'id'),
-            'direction' => $request->get('direction', 'asc'),
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 

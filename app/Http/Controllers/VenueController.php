@@ -27,7 +27,7 @@ class VenueController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:venues',
         ]);
 
         Venue::create($request->all());
